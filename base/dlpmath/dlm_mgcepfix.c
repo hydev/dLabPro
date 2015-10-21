@@ -25,15 +25,19 @@
  */
 
 /**
- * modified by Arnulf Becker 2015
- * See the bachelor thesis: Festkommaportierung des generalisierten Mel-Cepstrum
+ * Modified by Arnulf Becker 2015
+ * See the bachelor thesis: "Festkommaportierung des generalisierten Mel-Cepstrum"
+ *
  */
 
 #include "dlp_kernel.h"
 #include "dlp_base.h"
 #include "dlp_math.h"
 
+/* Switch for the data logger */
 #define LOG_ACTIVE 0
+
+/* Switch for the parallel floating point implementation */
 #define FLOATING_ACTIVE 0
 
 /* saves data for bachelor thesis evaluation */
@@ -258,10 +262,11 @@ void gc2gc_32(INT32 *c, const INT32 m, const INT16 g1, const INT16 g2, INT8 shf)
  */
 void ignorm_32(INT32 *c, INT32 m, const INT16 g, INT8 in_shf, INT8 out_shf) {
 	INT32 i;
-	/* prevent errors if first coefficient is zero */
-	static INT32 lastC0; //FIXME: makeshift
-	if(c[0] <= 0) c[0] = lastC0; //FIXME: makeshift
-	lastC0 = c[0]; //FIXME: makeshift
+	/* prevent errors if first coefficient is zero. FIXME: makeshift solution */
+	static INT32 lastC0; 			/* --------""-------*/
+	if(c[0] <= 0) c[0] = lastC0; 	/* --------"" ------*/
+	lastC0 = c[0]; 					/* --------""-------*/
+
 	FLOAT64 *cin = (FLOAT64*) dlp_malloc((m+1) * sizeof(FLOAT64));
 	for(i = 0; i <= m; i++) {
 		cin[i] = ((FLOAT64) c[i] / CON32 * pow(2, in_shf));
@@ -362,8 +367,6 @@ void dlm_mgcepfix_init(INT32 n, INT16 order, INT16 lambda) {
 	/* temporary buffers */
 	tempXI32 = dlp_malloc(n * sizeof(INT32));
 	tempYI32 = dlp_malloc(n * sizeof(INT32));
-//	tempXI16 = dlp_malloc(n * sizeof(INT16));
-//	tempYI16 = dlp_malloc(n * sizeof(INT16));
 
 #if FLOATING_ACTIVE
 	/* old floating-point implementation */
@@ -464,8 +467,6 @@ void dlm_mgcepfix_free() {
 	/* free temporary buffers */
 	dlp_free(tempXI32);
 	dlp_free(tempYI32);
-//	dlp_free(tempXI16);
-//	dlp_free(tempYI16);
 
 	/* free fixed point buffers */
 	dlp_free(lpZoI32);
